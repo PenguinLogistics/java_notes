@@ -114,14 +114,68 @@ class TreeNode extends Node{
 
 体现：
 	1.一旦子类A继承父类B以后，子类A就获得了父类B中生命的【所有】属性和方法 //包括private 但是访问权限还是private
+	
+	存疑？子类不能继承父类的private 
+      	A subclass does not inherit the private members of its parent class. However, if the superclass has public or protected methods for accessing its private fields, these can also be used by the subclass. "
+      	A nested class has access to all the private members of its enclosing class—both fields and methods. Therefore, a public or protected nested class inherited by a subclass has indirect access to all of the private members of the superclass.
+	详细链接：https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html
+	
+	①官方文档显示子类不能继承到父类的属性和方法。
+	②在内存上，子类调用父类的构造器，因此子类中存在父类的属性和方法，但是不能访问。
+	
 	2.子类继承了父类以后，还可以声明自己特有的属性和方法，实现功能的拓展
 
+3）super关键字的使用
+super表示父类的，可以调用 属性 方法 构造器
+
+①在子类的方法和构造器中，通过使用 super.属性 或 super.方法 显式的调用父类中声明的属性和方法。但通常情况系，习惯省略super.
+
+②子类和父类定义了同名的属性，若想要在子类中调用父类中声明的属性，则必须显式的使用super. 的方式
+
+③子类重写了父类中的方法以后，若想要在子类中调用父类中被重写的方法，则必须显式的使用super. 的方式
+
+调用构造器语法：
+	super(形参列表) 必须在子类构造器首行
+
+	this() 和 super()不能同时出现
+
+	构造器首行若没有显式的声明 this()或super()则默认调用父类中空参的构造器
+
+	在类的多个构造器中，至少有一个使用了super()调用父类中的构造器
 
 
 
-3.多态性
+3.（对象的）多态性：
 
-方法的重写
+1）多态是：父类的引用指向子类的对象（如List<String> l = new ArrayList<>();）
+
+2）（多态的使用）虚拟方法调用：
+	有了对象的多态性以后，我们在编译期只能调用父类中声明的方法，但在运行期，实际执行的是子类重写父类的方法
+	
+	定义：子类中定义了与父类同名同参的方法，在多态情况下，将此时父类的方法称为虚拟方法，父类根据赋给他的不同子类对象，动态调用属于子类的该方法。这样的方法调用在编译期是无法确定的。
+
+3）多态的使用前提：
+	①类的继承关系
+	②方法的重写
+
+4）对象的多态性，只适用于方法，不适用于属性。属性的编译和运行都看左边
+	
+
+方法的重写（override）
+
+	1.重写：子类继承父类以后，可以对父类中同名同参数的方法，进行覆盖操作
+
+	2.应用：重写以后，当子类创建对象以后，通过子类对象调用子父类中同名同参数方法时，实际执行的是子类重写父类的方法
+
+	语法
+	1.必须同名同参数
+	2.不能降低可见性，可见性要大于等于父类中被重写方法
+	3.子类中不能重写父类中的private方法（其实可以写但是不是重写，而是定义子类自己的方法）
+	4.返回值类型：
+		①父类被重写的方法的返回值是void，则子类重写方法的返回值只能是void
+		②父类被重写的方法的返回值是A类，则子类重写方法的返回值可以使A类或A类的子类
+		③父类被重写的方法的返回值是基本数据类型，则子类重写方法的返回值数据类型必须相同
+	5.子类重写的方法抛出的异常类型（如父类异常的子类）不大于父类被重写方法抛出的异常类型
 
 
 三、JVM内存结构
