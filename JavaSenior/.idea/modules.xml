@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/EnumAnnotation/EnumAnnotation.iml" filepath="$PROJECT_DIR$/EnumAnnotation/EnumAnnotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FileIO/FileIO.iml" filepath="$PROJECT_DIR$/FileIO/FileIO.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Generic/Generic.iml" filepath="$PROJECT_DIR$/Generic/Generic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Java8New/Java8New.iml" filepath="$PROJECT_DIR$/Java8New/Java8New.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSenior.iml" filepath="$PROJECT_DIR$/JavaSenior.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Reflect/Reflect.iml" filepath="$PROJECT_DIR$/Reflect/Reflect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UsefulClasses/UsefulClasses.iml" filepath="$PROJECT_DIR$/UsefulClasses/UsefulClasses.iml" />
+    </modules>
+  </component>
+</project>

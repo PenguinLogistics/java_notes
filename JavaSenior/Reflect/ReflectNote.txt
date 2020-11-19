@@ -1,0 +1,91 @@
+目录
+1. java反射机制概述
+2. 理解Class类 并 获取Class实例
+3. 类的加载与ClassLoader的理解
+4. 创建运行时类的对象
+5. 获取运行时类的完整结构
+6. 调用运行时类的指定结构
+7. 反射的应用：动态代理
+
+
+一、Java反射机制概述    //ReflectionTest @test2
+概述：
+    Reflection 反射 是被视为动态语言的关键，反射机制允许程序在执行期借助 Reflection API 取得任何类的内部信息，并能直接操作任意对象的内部属性及方法
+    加载完类后，在堆内存的方法区中就产生了一个Class类型的对象（一个类只有一个Class对象），这个对象就包含了完整的类的结构信息。我们可以通过这个对象看到类的结构。这个对象就像一面镜子，透过这个镜子看到类的结构，所以，我们形象的称之为：反射
+    对以上这段描述的疑问
+    问题1. 堆内存的方法区？堆和方法区不是两块内存空间吗？
+    关于这个的理解  Although the method area is logically part of the heap, simple implementations may choose not to either garbage collect or compact it. --jdk 8 documentation “《java虚拟机规范》中明确说明 尽管所有的方法区在逻辑上是属于堆的一部分，但一些简单的实现可能不会选择去进行垃圾回收或者进行压缩” 但对于HotSpotJVM 而言，方法区还有一个别名加 "Non-heap"，目的就是要和堆分开。所以，方法区看作是一块独立于java堆的内存空间
+    问题2. Class类对象储存在 方法区 吗？
+    《java虚拟机规范》 中对java堆的描述是： "The heap is the run-time data area from which memory for all class instances and arrays is allocated." --jdk 8 documentation 所有对象（类的）实例以及数组都应当在运行时分配在堆上。实际上 几乎所有类的实例，不是所有（也可能在栈中），但是没提过类的实例储存在方法区？
+    从《Java虚拟机规范》所定义的概念模型来看，所有Class相关的信息都应该存放在方法区之中，但方法区该如何实现，《Java虚拟机规范》并未做出规定，这就成了一件允许不同虚拟机自己灵活把握的事情。JDK 7及其以后版本的HotSpot虚拟机选择把静态变量与类型在Java语言一端的映射Class对象存放在一起，存储于Java堆之中，  ----《深入理解java虚拟机第三版》
+    Classloader加载一个类并把类型信息保存到方法区后，会创建一个Class对象，存放在堆区的，不是方法区，这点很多人容易犯错，它为程序提供了访问类型信息的方法。
+    在一个JVM实例的内部，类型信息被存储在一个称为方法区的内存逻辑区中。类型信息是由类加载器在类加载时从类文件中提取出来的。类(静态)变量也存储在方法区中。
+    Class对象是存放在堆区的，不是方法区，这点很多人容易犯错。类的元数据（元数据并不是类的Class对象。Class对象是加载的最终产品，类的方法代码，变量名，方法名，访问权限，返回值等等都是在方法区的）才是存在方法区的。
+反射相关的主要API
+    java.lang.Class                 代表一个类
+    java.lang.reflect.Method        代表类的方法
+    java.lang.reflect.Field         代表类的成员变量
+    java.lang.reflect.Constructor   代表类的构造器
+
+
+二、关于java.lang.Class 类的理解 //     ReflectionTest @test3 @test4
+1. 类的加载过程
+程序经过 javac.exe 命令（编译）以后，会生成一个字节码文件(.class)，接着我们使用 java.exe 命令对某个字节码文件进行解释运行。相当于将某个字节码文件加载到内存中。此过程就称为类的加载。加载到内存中的类，我们称为运行时类，此运行时类，就作为Class类 的一个实例。
+//万事万物皆对象？ 对象.xxx, File, URL, 前端、数据库操作
+
+2. 换句话说， Class的实例就对应着一个运行时类
+
+可以有 Class对象的类型
+1) class        外部类、成员（成员内部类，静态内部类），局部内部类，匿名内部类
+2) interface    接口
+3) []           数组
+4) enum         枚举
+5) annotation   注解@interface
+6) primitive type   基本数据类型
+7) void
+
+
+三、类的加载与ClassLoader的理解// ClassLoaderTest
+类的加载过程：当程序主动使用某个类，如果该类还未被加载到内存 (类的加载信息储存在方法区(JVM规范) jdk 1.8 用元空间(hotspot)实现 ) 中，则系统会通过如下三个步骤来对类进行初始化
+    类的加载(load)：将类的 class文件读入内存，并为之创建一个java.lang.Class对象。此过程由 类的加载器 完成
+    类的链接(link)：将类的二进制数据合并到 JRE 中
+                    为 static 变量分配内存，设置为默认初始值
+    类的初始化(initialize)：JVM 负责对类进行初始化
+                    执行类构造器方法 <client>() ，将静态结构初始化（如果有显式值）
+详细：https://www.cnblogs.com/woniufei/p/9670679.html
+解释符号引用和直接引用：https://blog.csdn.net/qq_30242987/article/details/88571269
+
+类加载器的作用
+    类加载的作用：将class文件字节码内容加载到内存中，并将这些静态数据转换成方法区的运行时数据结构，然后在堆中生成一个代表这个类的java.lang.Class对象，作为方法区中类数据的访问入口
+    类缓存：标准的javaSE类加载器可以按要求找类，但一旦某个类被加载到类加载器中，它将维持加载（缓存）一段时间。不过 JVM垃圾回收机制可以回收这些 Class对象
+ClassLoader
+    引导类加载器：C++编写，是JVM自带的类加载器，负责java平台核心库，用来装载核心类库。该加载器无法直接获取。
+    扩展类加载器：负责jre/lib/ext 目录下的jar包或-D java.ext.dirs指定目录下的jar包装入工作库
+    系统类加载器：负责 java -classpath 或 -D java.class.path所指定目录下的jar包装入工作，是最通常的加载器
+
+
+四、创建运行时类对象 //   NewInstanceTest
+    <Class>.newInstance()
+
+五、获取运行时类的完整结构
+    FieldTest 获取属性
+    MethodTest 获取方法
+
+六、获取指定结构
+    GetSpecificTest
+
+七、动态代理
+    ProxyTest //静态代理
+    StaticProxyTest //动态代理
+
+
+
+
+
+
+
+
+
+
+
+

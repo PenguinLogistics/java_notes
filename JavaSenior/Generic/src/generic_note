@@ -1,0 +1,77 @@
+泛型的使用
+1. jdk5.0新增特性
+2. 在集合中使用泛型
+    ① 集合接口或集合类在jdk5.0时都修改为带泛型的结构
+    ② 在实例化集合类时，可以指明具体的泛型类型
+    ③ 指明完成以后，在集合类或接口中凡是定义类或接口时，内部结构（比如：方法，构造器，属性等）使用到类的泛型的位置，都指定为实例化的泛型类型。比如 add(E e) -->实例化以后，add(Integer e)
+    ④ 注意：泛型的数据类型必须是类，不能是基本数据类型。需要使用到基本数据类型的位置，拿包装类替换
+    ⑤ 如果实例化时，没有指明泛型的类型，默认类型为 java.lang.Object 类型
+
+3. 如何自定义泛型结构：泛型类、泛型接口、泛型方法
+    GenericTest1.java
+    1. 泛型类可能有多个参数 <E1,E2,E3>
+    2. 泛型类的构造器 public GenericClass(){}
+    3. 实例化后，操作原来泛型位置的结构必须与指定泛型类型一致
+    4. 泛型不同的引用不能相互赋值
+        在编译时 ArrayList<String> 和 ArrayList<Integer>是两种类型，但是在运行时只有一个ArrayList被加载到JVM
+    5. 泛型如果不指定，将被擦除，泛型对应的类型均按Object处理，但不等价于Object。
+        经验：泛型要使用一路都用。要不用，一路都不要用
+    6. 如果泛型结构是一个接口或抽象类，则不可创建泛型类的对象
+    7. jdk 1.7 简化操作 ArrayList<Fruit> flist = new ArrayList<>();
+    8. 泛型类不能用基本数据类型，用包装类
+    9(*). 静态方法中不能使用类的泛型
+        原因：面向对象 类的泛型在实例化时指定，而静态结构的加载早于对象的创建
+    10. 异常类不能声明为泛型类 class MyException<T> try{}catch(T t){} 都编译不通过
+    11. 不能使用new E[]。 但是可以 E[] elements = (E[])new Object[capacity];
+        参考：ArrayList源码中声明：Object[] elementData，而非泛型参数类型数组
+    12. 父类有泛型，子类可以选择保留泛型或选择指定泛型类型
+
+    class Father(T1, T2){}
+    class Son1 extends Father{}                     //没有类型 擦除
+    class Son2 extends Father<Integer, String>{}    //具体类型
+    //保留父类泛型
+    class Son3<T1, T2> extends Father<T1, T2>{}     //全部保留
+    class Son4<T2> extends Father<Integer, T2>{}    //部分保留
+
+泛型方法:在方法中出现了泛型结构，泛型参数与类的泛型参数没有任何关系
+        泛型方法所属的类是不是泛型类都没有关系
+        泛型方法，可以声明为静态的。因为泛型参数是在调用方法时确定的，并非在实例化类时确定
+
+泛型类和泛型方法的使用
+    DAO (DAO.java CustomerDAO.java)
+
+注意事项
+1. 泛型在继承方面的体现
+    //GenericTest @Test2
+    类A 是 类B 的父类，则 A[] 是 B[] 的父类，但 G<A> 和 G<B> 二者不具备子父类关系
+2. 通配符的使用
+    //GenericTest @Test3
+    通配符：?
+    类A 是 类B 的父类，G<A> 和 G<B> 二者不具备子父类关系，二者共同的父类是G<?>
+    对于 List<?> 不能向其内部添加数据，除了null
+                允许读取数据，读取的数据类型为Object
+
+3. 有限制条件的通配符
+    //GenericTest @Test4
+    <? extends Number>
+    只允许泛型为Number及其子类引用调用
+    <? super Number>
+    只允许泛型为Number及其父类引用调用
+    <? extends Comparable>
+    只允许泛型为实现Comparable接口的实现类引用调用
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

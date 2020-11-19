@@ -1,0 +1,102 @@
+************************************
+String 类：代表字符串
+底层：
+String是一个final类，代表不可变的字符序列
+String对象的字符内容储存在一个字符数组 value[] 中
+
+public final class String
+    implements java.io.Serializable, Comparable<String>, CharSequence{
+
+    private final char value[];
+
+    private int hash; //default to 0
+}
+
+1. String 声明为final的，不可被继承
+2. String 实现了Serializable接口：表示字符串是支持序列化的
+          实现了Comparable接口：表示可以比较大小
+3. String 内部定义了 final char[] value 用于储存字符串数据
+4. String 代表一个不可变的字符序列 简称：不可变性
+
+String的实例化方式：
+    1. 通过字面量定义 （在方法区（java8 方法区通过元空间实现） 常量池）
+        1.6 字符串常量池 在永久代
+        1.7 字符串常量池 在堆
+        1.8 字符串常量池 在元空间 （1.8取消了永久带，改为元空间）
+    2. 通过 new + 构造器 （在堆）
+
+
+常用方法
+https://blog.csdn.net/xupt_rl/article/details/89474033
+
+int length()    return value.length
+char charAt(int index)   return value[index]
+boolean isEmpty()   return value.length == 0
+String toLowerCase()
+String toUperCase()
+String trim()
+boolean equals(Object obj)
+boolean equalsIgnoreCase(String anotherString)
+int compareTo(String anotherString)
+String substring(int beginIndex)
+String substring(int beginIndex, int endIndex)
+
+StringBuffer/StringBuilder extends AbstractStringBuilder
+
+    String StringBuffer StringBuilder 的异同？
+    String: 不可变的字符序列，底层使用 char[] 储存
+    StringBuffer: 可变的字符序列 线程安全的，效率低 底层使用 char[] 储存
+    StringBuilder: 可变的字符序列 线程不安全的，效率高 底层使用char[] 储存
+
+    源码分析：
+    String str = new String(); // char[] value = new char[0];
+    String str1 = new String("abc"); // char[] value = new char[]{'a','b','c'};
+    StringBuffer sb1 = new StringBuffer(); // char[] value = new char[16]; 底层创建了一个长度是16的数组
+    sb1.append('a'); // value[0] = 'a';
+    sb1.append('b'); // value[1] = 'b';
+    StringBuffer sb2 = new StringBuffer("abc"); // char[] value = new char["abc".length() + 16];
+
+    //问题1
+    System.out.println(sb2.length()); // 3  //return count;
+    //问题2. 扩容：如果添加的数据底层盛不下了，那就扩容底层数组
+                  默认情况下，扩容为原来的2倍+2， 同时将原有数组中的元素复制到新数组中
+
+
+    StringBuffer/StringBuilder类的常用方法
+    StringBuffer append(xxx): 提供了很多append()方法，用于底层字符串拼接
+    StringBuffer delete(int start, int end): 删除指定位置的内容
+    StringBuffer replace(int start, int end, String str): 把[start,end) 位置替换为str
+    StringBuffer insert(int offset, xxx) 在指定位置插入xxx
+    StringBuffer reverse(): 把当前字符序列逆转
+    public int indexOf(String str)
+    public String substring(int start, int end)
+    public int length()
+    public char charAt(int n)
+    public void setCharAt(int n, char ch)
+
+效率：StringBuilder > StringBuffer > String
+
+比较器
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
