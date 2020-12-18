@@ -1,10 +1,9 @@
-package jdbc_01;
+package demo01.connection;
 
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
